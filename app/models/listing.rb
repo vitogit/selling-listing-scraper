@@ -13,7 +13,7 @@ class Listing < ActiveRecord::Base
 
   def self.scrape_ml
     @listings = []
-    max_pages = 2
+    max_pages = 20
     dolar_to_pesos = 26.5
     max_price = 250000
     #barrios punta carretas, pocitos, pocitos-nuevo
@@ -80,7 +80,7 @@ class Listing < ActiveRecord::Base
     @listings = []
     page = agent.get('http://www.gallito.com.uy/inmuebles/apartamentos/venta/montevideo/pocitos!pocitos-nuevo!punta-carretas!villa-biarritz/2-dormitorios')
     pages = 0
-    max_pages = 2
+    max_pages = 20
     dolar_to_pesos = 26.5
     max_price = 250000
 
