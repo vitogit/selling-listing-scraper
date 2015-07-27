@@ -19,6 +19,9 @@
   background-color: rgba(65, 255, 0, 0.6);
 }
 
+.container {
+  width:1350px;
+}
 .datatable {
   width:1300px;
 }
