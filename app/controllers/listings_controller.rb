@@ -14,6 +14,7 @@ class ListingsController < ApplicationController
     else
       @listings = Listing.where(deleted:false).where("img not like ?", "%nodisponible%").order('created_at desc')
     end
+    @listings = @listings.reject { |listing| listing.similar_master == false }
 
 
   end
@@ -30,10 +31,12 @@ class ListingsController < ApplicationController
     @listing.similar = [] if @listing.similar.nil?
     if params[:listing][:similar]
       @listing.similar << params[:listing][:similar]
+      @listing.similar_master = true
       @listing.save
       similar_listing = Listing.find(params[:listing][:similar])
       similar_listing.similar = [] if similar_listing.similar.nil?
       similar_listing.similar << @listing.id
+      similar_listing.similar_master = false
       similar_listing.save
     end
     redirect_to edit_listing_path(@listing.id), notice: 'Added similar listing.'

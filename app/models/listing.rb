@@ -3,9 +3,9 @@ class Listing < ActiveRecord::Base
   accepts_nested_attributes_for :pictures
   serialize :similar
 
-  # def similars
-  #   Listing.find(similar) if similar.present?
-  # end
+  def similars
+    Listing.find(similar) if similar.present?
+  end
 
   def id_title_price
     id.to_s + " - " + title.to_s + " - " + price.to_s
@@ -40,7 +40,6 @@ class Listing < ActiveRecord::Base
       raw_listings.each do |raw_listing|
         listing = Listing.new
         listing.from = "ml"
-        listing.similar = []
 
         listing.link = raw_listing.at('a').attributes['href']
         listing.external_id = listing.link.split('-')[1]
@@ -55,6 +54,7 @@ class Listing < ActiveRecord::Base
         if listing.price < max_price
           # price change, add comment with the old price
           if old_listing.nil?
+            listing.similar = []
             listing.save #new listing
           else
             if old_listing.price.present? && old_listing.price != listing.price
@@ -94,7 +94,6 @@ class Listing < ActiveRecord::Base
 
         listing = Listing.new
         listing.from = "gallito"
-        listing.similar = []
 
         listing.link = raw_listing.attributes['href']
         listing.external_id = listing.link.split('-')[-1]
@@ -113,6 +112,7 @@ class Listing < ActiveRecord::Base
         if listing.price < max_price
           # price change, add comment with the old price
           if old_listing.nil?
+            listing.similar = []
             listing.save #new listing
           else
             if old_listing.price.present? && old_listing.price != listing.price

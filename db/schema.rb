@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713185616) do
+ActiveRecord::Schema.define(version: 20150727193734) do
 
   create_table "listings", force: :cascade do |t|
     t.string   "title"
@@ -20,12 +20,12 @@ ActiveRecord::Schema.define(version: 20150713185616) do
     t.string   "address"
     t.integer  "phone"
     t.string   "link"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.string   "currency"
     t.string   "img"
     t.string   "external_id"
-    t.boolean  "deleted",      default: false
+    t.boolean  "deleted",        default: false
     t.integer  "ranking"
     t.boolean  "full_scraped"
     t.string   "description"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20150713185616) do
     t.string   "comment"
     t.string   "from"
     t.text     "similar"
+    t.boolean  "similar_master"
   end
 
   create_table "pictures", force: :cascade do |t|
