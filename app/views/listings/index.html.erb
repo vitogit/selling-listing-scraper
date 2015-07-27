@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h1>ScraperMagic</h1> <br>
+  <h1>Selling ScraperMagic</h1> <br>
   <!-- <%= link_to new_listing_path, class: 'btn btn-primary new-listing' do %>
     <span class="glyphicon glyphicon-plus"></span>
     New Listing
@@ -20,7 +20,6 @@
         <th>Title</th>
         <th>Price</th>
         <th>Gc</th>
-        <th>Total</th>
         <th>Description</th>
         <th>Comment</th>
         <!-- <th>Phone</th> -->
@@ -40,9 +39,8 @@
               <% end %>
             </td>
             <td> <div style="width:150px;height:150px;overflow:hidden"><%="#{listing.title} -- #{listing.from} " %> </div></td>
-            <td> <%= listing.price %> <%= listing.currency %></td>
+            <td> <%= number_to_currency(listing.price,precision: 0) %> <%= listing.currency %></td>
             <td><%= listing.gc %> <%= listing.guarantee %></td>
-            <td><%= (listing.price.to_i+listing.gc.to_i) if listing.price && listing.gc%></td>
             <td> <div style="width:190px;height:150px;overflow:hidden"> <%= listing.description %> </div> </td>
             <td> <div style="width:190px;height:150px;overflow:hidden"> <%= listing.comment %> </div> </td>
             <td  class="ranking_<%= listing.ranking %>"> <%=listing.ranking  %></td>

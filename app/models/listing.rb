@@ -13,22 +13,16 @@ class Listing < ActiveRecord::Base
 
   def self.scrape_ml
     @listings = []
-    max_pages = 20
+    max_pages = 2
     dolar_to_pesos = 26.5
-    max_price = 17000
+    max_price = 250000
     #barrios punta carretas, pocitos, pocitos-nuevo
-    urls = ['http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/punta-carretas-montevideo/_PriceRange_0-17000_Ambientes_2',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-montevideo/_PriceRange_0-17000_Ambientes_2',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-nuevo-montevideo/_PriceRange_0-17000_Ambientes_2',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/villa-biarritz-montevideo/_PriceRange_0-17000_Ambientes_2',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/punta-carretas-montevideo/_PriceRange_0-17000_Ambientes_3',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-montevideo/_PriceRange_0-17000_Ambientes_3',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-nuevo-montevideo/_PriceRange_0-17000_Ambientes_3',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/villa-biarritz-montevideo/_PriceRange_0-17000_Ambientes_3',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/punta-carretas-montevideo/_PriceRange_0-17000_Ambientes_4',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-montevideo/_PriceRange_0-17000_Ambientes_4',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/pocitos-nuevo-montevideo/_PriceRange_0-17000_Ambientes_4',
-            'http://inmuebles.mercadolibre.com.uy/apartamentos/alquiler/villa-biarritz-montevideo/_PriceRange_0-17000_Ambientes_4'
+    urls = ['http://inmuebles.mercadolibre.com.uy/apartamentos/venta/punta-carretas-montevideo/_PriceRange_0-7132500_Ambientes_3',
+            'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/punta-carretas-montevideo/_PriceRange_0-7132500_Ambientes_4',
+            'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-montevideo/_PriceRange_0-7132500_Ambientes_3',
+            'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-montevideo/_PriceRange_0-7132500_Ambientes_4',
+            'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-nuevo-montevideo/_PriceRange_0-7132500_Ambientes_3',
+            'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-nuevo-montevideo/_PriceRange_0-7132500_Ambientes_4'
             ]
 
     old_count = Listing.count
@@ -84,11 +78,11 @@ class Listing < ActiveRecord::Base
   def self.scrape_gallito
     agent = Mechanize.new
     @listings = []
-    page = agent.get('http://www.gallito.com.uy/inmuebles/apartamentos/alquiler/montevideo/pocitos!pocitos-nuevo!punta-carretas!villa-biarritz/1-dormitorio')
+    page = agent.get('http://www.gallito.com.uy/inmuebles/apartamentos/venta/montevideo/pocitos!pocitos-nuevo!punta-carretas!villa-biarritz/2-dormitorios')
     pages = 0
-    max_pages = 20
+    max_pages = 2
     dolar_to_pesos = 26.5
-    max_price = 17000
+    max_price = 250000
 
     # add /ord_rec to sort by recent
     # raw_listings = agent.page.search("#grillaavisos a")
@@ -111,14 +105,6 @@ class Listing < ActiveRecord::Base
 
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
-
-        listing.currency = price_selector.text.gsub(/[\d^.]/, '') if price_selector
-        if listing.currency.strip == "U$S"
-          listing.price = listing.price * dolar_to_pesos
-          listing.currency = "(c)"
-        else
-          listing.currency = ""
-        end
 
         listing.title = raw_listing.at('.thumb_titulo').text
         listing.address = raw_listing.at('.thumb_txt h2').text
