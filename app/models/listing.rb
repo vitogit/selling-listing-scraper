@@ -99,7 +99,7 @@ class Listing < ActiveRecord::Base
         listing.link = raw_listing.attributes['href']
         listing.external_id = listing.link.split('-')[-1]
         old_listing = Listing.find_by_external_id(listing.external_id)
-        listing.img = raw_listing.at('#div_rodea_datos img').attributes['data-original']
+        listing.img = raw_listing.at('#div_rodea_datos img').attributes['data-original'] if raw_listing
         price_selector = raw_listing.at('.thumb01_precio, .thumb02_precio')
         listing.price = price_selector.text.gsub(/\D/, '') if price_selector
 
