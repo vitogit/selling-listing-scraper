@@ -101,8 +101,10 @@ class ListingsController < ApplicationController
     dupes = Listing.where( title: @listing.title, description: @listing.description).order(:created_at)
     if dupes.size > 1
       dupe = dupes.first
+      puts "dupe_____"+dupe.to_json
       @listing.comment = "" if @listing.comment.nil?
       @listing.comment = @listing.comment + " Duplicado: "+request.base_url+"/listings/"+dupe.id.to_s+"/edit"
+    end
   end
 
   def scrapeit
