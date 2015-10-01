@@ -78,7 +78,7 @@ class Listing < ActiveRecord::Base
   def self.scrape_gallito
     agent = Mechanize.new
     @listings = []
-    page = agent.get('http://www.gallito.com.uy/inmuebles/apartamentos/venta/montevideo/pocitos!pocitos-nuevo!punta-carretas!villa-biarritz/2-dormitorios')
+    page = agent.get('http://www.gallito.com.uy/inmuebles/apartamentos/venta/montevideo/pocitos!pocitos-nuevo!punta-carretas!villa-biarritz/est-buen-estado/2-dormitorios/ori-frente')
     pages = 0
     max_pages = 20
     dolar_to_pesos = 26.5
