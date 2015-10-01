@@ -52,7 +52,7 @@ class Listing < ActiveRecord::Base
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
 
-        if listing.price < max_price
+        if listing.price <= max_price
           # price change, add comment with the old price
           if old_listing.nil?
             listing.save #new listing
@@ -89,28 +89,27 @@ class Listing < ActiveRecord::Base
     # return if Listing.find_by_link(raw_listings.first.attributes['href'].to_s).present?
 
     while  pages < max_pages && page.link_with(text: /Siguiente/)  do
-      raw_listings = agent.page.search("#grillaavisos a")
+      raw_listings = agent.page.search("#grillaavisos article")
       raw_listings.each do |raw_listing|
 
         listing = Listing.new
         listing.from = "gallito"
         listing.similar = []
 
-        listing.link = raw_listing.attributes['href']
+        listing.link = raw_listing.at('.img-seva').attributes['alt'].text
         listing.external_id = listing.link.split('-')[-1]
         old_listing = Listing.find_by_external_id(listing.external_id)
-        listing.img = raw_listing.at('#div_rodea_datos img').attributes['data-original'] if raw_listing
-        price_selector = raw_listing.at('.thumb01_precio, .thumb02_precio')
-        listing.price = price_selector.text.gsub(/\D/, '') if price_selector
+        listing.img = raw_listing.at('.img-seva').attributes['src'].text 
+        price_selector = raw_listing.at('.contenedor-info strong').text
+        listing.price = price_selector.gsub(/\D/, '') if price_selector
 
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
 
-        listing.title = raw_listing.at('.thumb_titulo').text
-        listing.address = raw_listing.at('.thumb_txt h2').text
-        listing.phone = raw_listing.at('.thumb_telefono').text.gsub(/\s+/, "")
+        listing.title = raw_listing.at('.mas-info h2').text
+        listing.phone = raw_listing.at('.movil a').text.gsub(/\s+/, "")
 
-        if listing.price < max_price
+        if listing.price <= max_price
           # price change, add comment with the old price
           if old_listing.nil?
             listing.save #new listing

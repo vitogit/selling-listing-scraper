@@ -74,7 +74,6 @@ class ListingsController < ApplicationController
     agent = Mechanize.new
     page = agent.get(@listing.link)
     dolar_to_pesos = 26.5
-    max_price = 18000
 
     raw_listing = agent.page.search(".vip-wrapper")
 
@@ -88,19 +87,22 @@ class ListingsController < ApplicationController
 
 
     @listing.description = @listing.description+". "+sup_total if sup_total
-
-    # save pictures only if there are empty
-    if !@listing.pictures.present?
-      raw_pictures = raw_listing.search(".product-gallery-container div img")
-
-      @pictures = []
-      raw_pictures.each do |raw_picture|
-        picture = Picture.new
-        picture.url = raw_picture.attributes['src'].text
-
-        @listing.pictures << picture unless picture.url.include? '-M.' #remove thumbs images
-      end
+    # bring the pics again
+    @listing.pictures.destroy_all
+    raw_pictures = raw_listing.search(".product-gallery-container div img")
+    @pictures = []
+    raw_pictures.each do |raw_picture|
+      picture = Picture.new
+      picture.url = raw_picture.attributes['src'].text
+      @listing.pictures << picture unless picture.url.include? '-M.' #remove thumbs images
     end
+
+    #Search duplicates
+    dupes = Listing.where( title: @listing.title, description: @listing.description).order(:created_at)
+    if dupes.size > 1
+      dupe = dupes.first
+      @listing.comment = "" if @listing.comment.nil?
+      @listing.comment = @listing.comment + " Duplicado: "+request.base_url+"/listings/"+dupe.id.to_s+"/edit"
   end
 
   def scrapeit
@@ -132,15 +134,13 @@ class ListingsController < ApplicationController
     @listing.description = @listing.description+". "+sup_total if sup_total
 
     # save pictures only if there are empty
-    if !@listing.pictures.present?
-      raw_pictures = raw_listing.search(".sliderImg")
-
-      @pictures = []
-      raw_pictures.each do |raw_picture|
-        picture = Picture.new
-        picture.url = raw_picture.attributes['href']
-        @listing.pictures << picture
-      end
+    @listing.pictures.destroy_all
+    raw_pictures = raw_listing.search(".sliderImg")
+    @pictures = []
+    raw_pictures.each do |raw_picture|
+      picture = Picture.new
+      picture.url = raw_picture.attributes['href']
+      @listing.pictures << picture
     end
   end
 
@@ -203,6 +203,12 @@ class ListingsController < ApplicationController
       format.html { redirect_to listings_url, notice: 'Listing was successfully destroyed.' }
       format.js {}
     end
+  end
+
+  def statistics
+    start_date = Date.new(2015, 7, 10)
+    @listings = Listing.where(created_at: start_date.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).group_by{|x| x.created_at.strftime("%Y-%m-%d %A") }
+    @listings_weekday = Listing.where(created_at: start_date.beginning_of_day..Date.today.end_of_day).order(created_at: :desc).group_by{|x| x.created_at.strftime("%A") }
   end
 
   private
