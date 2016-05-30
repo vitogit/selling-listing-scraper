@@ -13,8 +13,8 @@ class Listing < ActiveRecord::Base
 
   def self.scrape_ml
     @listings = []
-    max_pages = 20
-    dolar_to_pesos = 26.5
+    max_pages = 1
+    dolar_to_pesos = 31
     max_price = 250000
     #barrios punta carretas, pocitos, pocitos-nuevo
     urls = ['http://inmuebles.mercadolibre.com.uy/apartamentos/venta/punta-carretas-montevideo/_PriceRange_0-7132500_Ambientes_3',
@@ -32,7 +32,7 @@ class Listing < ActiveRecord::Base
 
       begin
         page = agent.get(url)
-        raw_listings = page.search(".article")
+        raw_listings = page.search(".item-realestate-inner")
       rescue Exception => e
         raw_listings = []
       end
@@ -42,13 +42,13 @@ class Listing < ActiveRecord::Base
         listing.from = "ml"
         listing.similar = []
 
-        listing.link = raw_listing.at('a').attributes['href']
+        listing.link = raw_listing.at('a').attributes['href'].text
         listing.external_id = listing.link.split('-')[1]
         old_listing = Listing.find_by_external_id(listing.external_id)
 
         listing.title = raw_listing.at('a').text
-        listing.img = raw_listing.at('img').attributes['title'] || raw_listing.at('img').attributes['src'] #in the title is the real url, because with js it load it
-        listing.price = raw_listing.at('.ch-price').text[0..-3].gsub(/\D/, '')
+        listing.img = raw_listing.at('img').attributes['src'].text  #in the title is the real url, because with js it load it
+        listing.price = raw_listing.at('.ch-price').text[4..-1].gsub(/\D/, '')
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
 
@@ -84,8 +84,8 @@ class Listing < ActiveRecord::Base
     @listings = []
     page = agent.get(url)
     pages = 0
-    max_pages = 20
-    dolar_to_pesos = 26.5
+    max_pages = 1
+    dolar_to_pesos = 31
     max_price = 250000
 
     # add /ord_rec to sort by recent
@@ -100,10 +100,10 @@ class Listing < ActiveRecord::Base
         listing.from = "gallito"
         listing.similar = []
 
-        listing.link = raw_listing.at('.img-seva').attributes['alt'].text
+        listing.link = raw_listing.at('.mas-info a').attributes['href'].text
         listing.external_id = listing.link.split('-')[-1]
         old_listing = Listing.find_by_external_id(listing.external_id)
-        listing.img = raw_listing.at('.img-seva').attributes['src'].text 
+        listing.img = raw_listing.at('img').attributes['src'].text 
         price_selector = raw_listing.at('.contenedor-info strong').text
         listing.price = price_selector.gsub(/\D/, '') if price_selector
 
