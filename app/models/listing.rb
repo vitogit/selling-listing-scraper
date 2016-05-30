@@ -103,7 +103,7 @@ class Listing < ActiveRecord::Base
         listing.link = raw_listing.at('.mas-info a').attributes['href'].text
         listing.external_id = listing.link.split('-')[-1]
         old_listing = Listing.find_by_external_id(listing.external_id)
-        listing.img = raw_listing.at('img').attributes['src'].text 
+        listing.img = raw_listing.at('.img-seva').attributes['src'].text 
         price_selector = raw_listing.at('.contenedor-info strong').text
         listing.price = price_selector.gsub(/\D/, '') if price_selector
 

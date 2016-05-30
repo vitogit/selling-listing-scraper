@@ -47,7 +47,7 @@ class ListingsController < ApplicationController
     new_listing_count = Listing.count - old_count
     if new_listing_count > 0
       puts "Enviando email..."
-      NotificationMailer.new_listing_email(new_listing_count).deliver!
+      # NotificationMailer.new_listing_email(new_listing_count).deliver!
     else
       puts "nada nuevo"
       # NotificationMailer.new_listing_email(0).deliver!
@@ -79,12 +79,12 @@ class ListingsController < ApplicationController
   def scrapeit_ml
     agent = Mechanize.new
     page = agent.get(@listing.link)
-    dolar_to_pesos = 26.5
+    dolar_to_pesos = 31
 
     raw_listing = agent.page.search(".vip-wrapper")
 
     @listing.title = raw_listing.at('.bg-great-info h1').text
-    @listing.description = raw_listing.search('.description p').map(&:text).join(' ')
+    @listing.description = raw_listing.search('.description').map(&:text).join(' ')
     @listing.full_scraped = true
 
     sup_total = raw_listing.at(".technical-details span:contains('Superficie construida')").next_element.text if raw_listing.at(".technical-details span:contains('Superficie construida')")
@@ -125,7 +125,7 @@ class ListingsController < ApplicationController
   def scrapeit_gallito
     agent = Mechanize.new
     page = agent.get(@listing.link)
-    dolar_to_pesos = 26.5
+    dolar_to_pesos = 31
     max_price = 18000
 
     raw_listing = agent.page.search(".contendor")
