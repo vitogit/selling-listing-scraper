@@ -103,6 +103,8 @@ class ListingsController < ApplicationController
       @listing.pictures << picture unless picture.url.include? '-M.' #remove thumbs images
     end
 
+    @listing.map_location = raw_listing.at('#mapa img').attributes['src'].text if raw_listing.at('#mapa img')
+
     #Search duplicates
     dupes = Listing.where( title: @listing.title, description: @listing.description).order(:created_at)
     if dupes.size > 1
@@ -227,7 +229,7 @@ class ListingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def listing_params
-      params.require(:listing).permit(:full_scraped, :title, :price, :gc, :address, :phone, :link, :description,:comment, :guarantee, :ranking, :similar, :img,
+      params.require(:listing).permit(:full_scraped, :title, :price, :gc, :address, :phone, :link, :description,:comment, :guarantee, :ranking, :similar, :img, :map_location,
                                       pictures_attributes: [:url])
     end
 end
