@@ -13,7 +13,7 @@ class Listing < ActiveRecord::Base
 
   def self.scrape_ml
     @listings = []
-    max_pages = 1
+    max_pages = 20
     dolar_to_pesos = 31
     max_price = 250000
     #barrios punta carretas, pocitos, pocitos-nuevo
@@ -84,7 +84,7 @@ class Listing < ActiveRecord::Base
     @listings = []
     page = agent.get(url)
     pages = 0
-    max_pages = 1
+    max_pages = 20
     dolar_to_pesos = 31
     max_price = 250000
 
