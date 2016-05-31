@@ -91,7 +91,6 @@ class ListingsController < ApplicationController
     gc = raw_listing.at(".technical-details span:contains('Expensas')").next_element.text if raw_listing.at(".technical-details span:contains('Expensas')")
     @listing.gc = gc.gsub(/\D/, '') if gc.present?
 
-
     @listing.description = @listing.description+". "+sup_total if sup_total
     # bring the pics again
     @listing.pictures.destroy_all
@@ -128,7 +127,6 @@ class ListingsController < ApplicationController
     agent = Mechanize.new
     page = agent.get(@listing.link)
     dolar_to_pesos = 31
-    max_price = 18000
 
     raw_listing = agent.page.search(".contendor")
 
@@ -139,7 +137,6 @@ class ListingsController < ApplicationController
     sup_total = raw_listing.at("#primerosLi li:contains('Sup. Total:')").text if raw_listing.at("#primerosLi li:contains('Sup. Total:')")
     gc = raw_listing.at("#UlGenerales li:contains('Gastos Comunes:')").text if raw_listing.at("#UlGenerales li:contains('Gastos Comunes:')")
     @listing.gc = gc.gsub(/\D/, '') if gc.present?
-
 
     @listing.description = @listing.description+". "+sup_total if sup_total
 
