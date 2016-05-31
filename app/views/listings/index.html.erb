@@ -22,7 +22,6 @@
         <th>Title</th>
         <th>Price</th>
         <th>Gc</th>
-        <th>Total</th>
         <th>Description</th>
         <th>Comment</th>
         <!-- <th>Phone</th> -->
@@ -44,7 +43,6 @@
             <td> <div style="width:150px;height:150px;overflow:hidden"><%="#{listing.title} -- #{listing.from} " %> </div></td>
             <td> <%= listing.price %> <%= listing.currency %></td>
             <td><%= listing.gc %> <%= listing.guarantee %></td>
-            <td><%= (listing.price.to_i+listing.gc.to_i) if listing.price && listing.gc%></td>
             <td> <div style="width:190px;height:150px;overflow:hidden"> <%= listing.description %> </div> </td>
             <td> <div style="width:190px;height:150px;overflow:hidden"> <%= listing.comment %> </div> </td>
             <td  class="ranking_<%= listing.ranking %>"> <%=listing.ranking  %></td>
