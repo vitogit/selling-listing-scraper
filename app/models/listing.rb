@@ -2,6 +2,7 @@ class Listing < ActiveRecord::Base
   has_many :pictures, dependent: :destroy
   accepts_nested_attributes_for :pictures
   serialize :similar
+  serialize :picture_urls, Array
 
   # def similars
   #   Listing.find(similar) if similar.present?
@@ -24,7 +25,7 @@ class Listing < ActiveRecord::Base
             'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-nuevo-montevideo/_PriceRange_0-7132500_Ambientes_3',
             'http://inmuebles.mercadolibre.com.uy/apartamentos/venta/pocitos-nuevo-montevideo/_PriceRange_0-7132500_Ambientes_4'
             ]
-
+            
     old_count = Listing.count
     urls.each do |url|
       agent = Mechanize.new

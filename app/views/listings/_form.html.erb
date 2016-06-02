@@ -104,8 +104,8 @@
 <% end %>
 
 <div class="listing_pictures">
-  <% @listing.pictures.each do |picture| %>
-    <%= image_tag picture.url %>
+  <% @listing.picture_urls.each do |picture| %>
+    <%= image_tag picture %>
   <% end %>
 </div>
 

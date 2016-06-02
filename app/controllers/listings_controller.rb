@@ -93,13 +93,11 @@ class ListingsController < ApplicationController
 
     @listing.description = @listing.description+". "+sup_total if sup_total
     # bring the pics again
-    @listing.pictures.destroy_all
+    @listing.picture_urls.clear
     raw_pictures = raw_listing.search(".product-gallery-container div img")
-    @pictures = []
     raw_pictures.each do |raw_picture|
-      picture = Picture.new
-      picture.url = raw_picture.attributes['src'].text
-      @listing.pictures << picture unless picture.url.include? '-M.' #remove thumbs images
+      picture_url = raw_picture.attributes['src'].text
+      @listing.picture_urls << picture_url unless picture_url.include? '-M.' #remove thumbs images
     end
 
     @listing.map_location = raw_listing.at('#mapa img').attributes['src'].text if raw_listing.at('#mapa img')
@@ -141,13 +139,11 @@ class ListingsController < ApplicationController
     @listing.description = @listing.description+". "+sup_total if sup_total
 
     # save pictures only if there are empty
-    @listing.pictures.destroy_all
+    @listing.picture_urls.clear
     raw_pictures = raw_listing.search(".sliderImg")
-    @pictures = []
     raw_pictures.each do |raw_picture|
-      picture = Picture.new
-      picture.url = raw_picture.attributes['href']
-      @listing.pictures << picture
+      picture = raw_picture.attributes['href']
+      @listing.picture_urls << picture
     end
   end
 
@@ -226,7 +222,9 @@ class ListingsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def listing_params
-      params.require(:listing).permit(:full_scraped, :title, :price, :gc, :address, :phone, :link, :description,:comment, :guarantee, :ranking, :similar, :img, :map_location,
+      params.require(:listing).permit(:full_scraped, :title, :price, :gc, :address, 
+                                      :phone, :link, :description,:comment, :guarantee, 
+                                      :ranking, :similar, :img, :map_location, :picture_urls,
                                       pictures_attributes: [:url])
     end
 end

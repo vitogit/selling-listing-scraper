@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160530145230) do
+ActiveRecord::Schema.define(version: 20160601194302) do
 
   create_table "listings", force: :cascade do |t|
     t.string   "title"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20160530145230) do
     t.text     "similar"
     t.boolean  "similar_master"
     t.string   "map_location"
+    t.text     "picture_urls"
   end
 
   create_table "pictures", force: :cascade do |t|

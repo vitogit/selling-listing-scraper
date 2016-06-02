@@ -5,7 +5,7 @@
 
 $('.listing_pictures img').remove();
 <% @listing.pictures.each do |picture| %>
-   $('.listing_pictures').prepend('<img src="<%= picture.url %>" />');
+   $('.listing_pictures').prepend('<img src="<%= picture %>" />');
 <% end %>
 
 $('#listing_full_scraped').prop('checked', true);
