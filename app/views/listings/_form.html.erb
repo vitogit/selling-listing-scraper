@@ -104,9 +104,12 @@
 <% end %>
 
 <div class="listing_pictures">
-  <% @listing.picture_urls.each do |picture| %>
-    <%= image_tag picture %>
+  <% if @listing.picture_urls%>
+    <% @listing.picture_urls.each do |picture| %>
+      <%= image_tag picture %>
+    <% end %>
   <% end %>
+
 </div>
 
 <div id="mapa" class="map"> <img data-zoom="16" src="<%= @listing.map_location %>"> </div>
