@@ -4,7 +4,7 @@
 <% end %>
 
 $('.listing_pictures img').remove();
-<% @listing.pictures.each do |picture| %>
+<% @listing.picture_urls.try(:each) do |picture| %>
    $('.listing_pictures').prepend('<img src="<%= picture %>" />');
 <% end %>
 
