@@ -83,6 +83,15 @@ class ListingsController < ApplicationController
 
     raw_listing = agent.page.search(".vip-wrapper")
 
+    # bring the pics again
+    @listing.picture_urls.clear
+    raw_pictures = raw_listing.search(".product-gallery-container div img")
+    raw_pictures.each do |raw_picture|
+      picture_url = raw_picture.attributes['src'].text
+      @listing.picture_urls << picture_url unless picture_url.include? '-M.' #remove thumbs images
+    end
+    @listing.save
+    
     @listing.title = raw_listing.at('.bg-great-info h1').text
     @listing.description = raw_listing.search('.description').map(&:text).join(' ')
     @listing.full_scraped = true
@@ -92,13 +101,7 @@ class ListingsController < ApplicationController
     @listing.gc = gc.gsub(/\D/, '') if gc.present?
 
     @listing.description = @listing.description+". "+sup_total if sup_total
-    # bring the pics again
-    @listing.picture_urls.clear
-    raw_pictures = raw_listing.search(".product-gallery-container div img")
-    raw_pictures.each do |raw_picture|
-      picture_url = raw_picture.attributes['src'].text
-      @listing.picture_urls << picture_url unless picture_url.include? '-M.' #remove thumbs images
-    end
+
 
     @listing.map_location = raw_listing.at('#mapa img').attributes['src'].text if raw_listing.at('#mapa img')
 
@@ -128,6 +131,14 @@ class ListingsController < ApplicationController
 
     raw_listing = agent.page.search(".contendor")
 
+    @listing.picture_urls.clear
+    raw_pictures = raw_listing.search(".sliderImg")
+    raw_pictures.each do |raw_picture|
+      picture = raw_picture.attributes['href'].text
+      @listing.picture_urls << picture
+    end
+    @listing.save 
+    
     @listing.title = raw_listing.at('.titulo').text
     @listing.description = raw_listing.at('#descripcionLarga').text.squish
     @listing.full_scraped = true
@@ -137,14 +148,6 @@ class ListingsController < ApplicationController
     @listing.gc = gc.gsub(/\D/, '') if gc.present?
 
     @listing.description = @listing.description+". "+sup_total if sup_total
-
-    # save pictures only if there are empty
-    @listing.picture_urls.clear
-    raw_pictures = raw_listing.search(".sliderImg")
-    raw_pictures.each do |raw_picture|
-      picture = raw_picture.attributes['href']
-      @listing.picture_urls << picture
-    end
   end
 
   # GET /listings/1
@@ -224,7 +227,7 @@ class ListingsController < ApplicationController
     def listing_params
       params.require(:listing).permit(:full_scraped, :title, :price, :gc, :address, 
                                       :phone, :link, :description,:comment, :guarantee, 
-                                      :ranking, :similar, :img, :map_location, :picture_urls,
-                                      pictures_attributes: [:url])
+                                      :ranking, :similar, :img, :map_location, {:picture_urls => []},
+                                      :zone)
     end
 end
