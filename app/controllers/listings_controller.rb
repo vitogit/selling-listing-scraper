@@ -81,29 +81,30 @@ class ListingsController < ApplicationController
     page = agent.get(@listing.link)
     dolar_to_pesos = 31
 
-    raw_listing = agent.page.search(".vip-wrapper")
+    raw_listing = agent.page.search(".nav-main-content")
 
     # bring the pics again
     @listing.picture_urls.clear
-    raw_pictures = raw_listing.search(".product-gallery-container div img")
+    raw_pictures = raw_listing.search(".short-description-gallery-thumb img")
     raw_pictures.each do |raw_picture|
       picture_url = raw_picture.attributes['src'].text
-      @listing.picture_urls << picture_url unless picture_url.include? '-M.' #remove thumbs images
+      picture_url.sub! '-I.', '-F.'
+      @listing.picture_urls << picture_url
     end
     @listing.save
     
-    @listing.title = raw_listing.at('.bg-great-info h1').text
-    @listing.description = raw_listing.search('.description').map(&:text).join(' ')
+    @listing.title = raw_listing.at('.vip-title-main').text
+    @listing.description = raw_listing.search('.vip-description-container').map(&:text).join(' ')
     @listing.full_scraped = true
 
-    sup_total = raw_listing.at(".technical-details span:contains('Superficie construida')").next_element.text if raw_listing.at(".technical-details span:contains('Superficie construida')")
-    gc = raw_listing.at(".technical-details span:contains('Expensas')").next_element.text if raw_listing.at(".technical-details span:contains('Expensas')")
+    sup_total = raw_listing.at(".attribute-group span:contains('Superficie construida')").next_element.text if raw_listing.at(".attribute-group span:contains('Superficie construida')")
+    gc = raw_listing.at(".attribute-group span:contains('Expensas')").next_element.text if raw_listing.at(".attribute-group span:contains('Expensas')")
     @listing.gc = gc.gsub(/\D/, '') if gc.present?
 
     @listing.description = @listing.description+". "+sup_total if sup_total
 
 
-    @listing.map_location = raw_listing.at('#mapa img').attributes['src'].text if raw_listing.at('#mapa img')
+    # @listing.map_location = raw_listing.at('#mapa img').attributes['src'].text if raw_listing.at('#mapa img')
 
     #Search duplicates
     dupes = Listing.where( title: @listing.title, description: @listing.description).order(:created_at)
