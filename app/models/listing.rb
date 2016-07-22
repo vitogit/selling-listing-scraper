@@ -48,7 +48,12 @@ class Listing < ActiveRecord::Base
         old_listing = Listing.find_by_external_id(listing.external_id)
 
         listing.title = raw_listing.at('a').text
+        
         listing.img = raw_listing.at('.carousel img').attributes['src'].text
+        if (listing.img.include? 'cargando.gif')
+          listing.img = raw_listing.at('.carousel img').attributes['data-src'].text if raw_listing.at('.carousel img').attributes['data-src']
+          listing.img = raw_listing.at('.carousel img').attributes['title'].text if raw_listing.at('.carousel img').attributes['title']
+        end
         listing.price = raw_listing.at('.ch-price').text[4..-1].gsub(/\D/, '')
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
