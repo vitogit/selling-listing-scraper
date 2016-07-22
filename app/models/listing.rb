@@ -48,7 +48,7 @@ class Listing < ActiveRecord::Base
         old_listing = Listing.find_by_external_id(listing.external_id)
 
         listing.title = raw_listing.at('a').text
-        listing.img = raw_listing.at('img').attributes['src'].text  #in the title is the real url, because with js it load it
+        listing.img = raw_listing.at('.carousel img').attributes['src'].text
         listing.price = raw_listing.at('.ch-price').text[4..-1].gsub(/\D/, '')
         next if old_listing.present? && old_listing.price == listing.price && old_listing.img == listing.img
         next if listing.price > max_price 
